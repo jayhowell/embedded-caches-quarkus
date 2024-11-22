@@ -121,4 +121,14 @@ public class Score {
         if(card.length < HOLES)
             currentHole = card.length + 1;
     }
+
+    public Boolean matches(String playerName) {
+        // TODO Auto-generated method stub
+        System.out.println("calling the matches function for "+playerName);
+        if(playerName.matches(this.playerName))
+            return true;
+        else 
+            return false;
+        
+    }
 }

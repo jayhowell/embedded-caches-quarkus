@@ -1,18 +1,13 @@
 package org.acme;
 
 import java.util.List;
-
-
+import java.util.stream.Collectors;
 
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -47,6 +42,13 @@ public class ScoreResource {
     @GET
     public List<Score> getAll() {
         return scoreService.getAll();
+    }
+
+    @GET
+    @Path("/lambda")
+    public List<Score> getLambda() {
+        
+        return scoreService.getLambdaList();
     }
 
     @PATCH

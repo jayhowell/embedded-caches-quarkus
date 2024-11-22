@@ -3,9 +3,9 @@ package org.acme;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-
+import java.util.stream.Collectors;
 
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.logging.Logger;
@@ -32,6 +32,13 @@ public class ScoreService {
 
     public List<Score> getAll() { 
         return new ArrayList<>(scoreCache.values());
+    }
+
+    public List<Score> getLambdaList() { 
+        return scoreCache.entrySet().stream()
+                     .filter(entry -> entry.getValue().matches("Jay")) // Filter based on the value
+                     .map(Map.Entry::getValue)                        // Extract the values (Score)
+                     .collect(Collectors.toList());   
     }
 
     public void save(Score entry) { 
@@ -65,7 +72,7 @@ public class ScoreService {
 
         ConfigurationBuilder config = new ConfigurationBuilder();
 
-        config.expiration().lifespan(5, TimeUnit.MINUTES)
+        config.expiration().lifespan(30, TimeUnit.MINUTES)
                 .clustering().cacheMode(CacheMode.DIST_ASYNC)
                 .hash()
                 .numOwners(2);
