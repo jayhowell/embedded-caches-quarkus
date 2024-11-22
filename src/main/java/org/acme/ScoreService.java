@@ -55,14 +55,20 @@ public class ScoreService {
     }
 
     void onStart(@Observes @Priority(value = 1) StartupEvent ev){
+        System.setProperty("jgroups.dns.query", "jcache-quarkus-ping");
+
         GlobalConfigurationBuilder global = GlobalConfigurationBuilder.defaultClusteredBuilder();
-        global.transport().clusterName("ScoreCard");
+        global.transport()
+            .clusterName("ScoreCard")
+            .addProperty("configurationFile", "default-configs/default-jgroups-kubernetes.xml");
         cacheManager = new DefaultCacheManager(global.build());
 
         ConfigurationBuilder config = new ConfigurationBuilder();
 
         config.expiration().lifespan(5, TimeUnit.MINUTES)
-                .clustering().cacheMode(CacheMode.REPL_SYNC);
+                .clustering().cacheMode(CacheMode.DIST_ASYNC)
+                .hash()
+                .numOwners(2);
 
         cacheManager.defineConfiguration("scoreboard", config.build());
         scoreCache = cacheManager.getCache("scoreboard");

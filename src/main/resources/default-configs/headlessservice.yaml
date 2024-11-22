@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jcache-quarkus-ping
+  namespace: quarkusinfinispan
+  labels:
+    app.kubernetes.io/name: embedded-caches-quarkus
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+spec:
+  clusterIP: None # Headless service
+  selector:
+    app.kubernetes.io/name: embedded-caches-quarkus
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  ports:
+    - name: jgroups
+      protocol: TCP
+      port: 7800 # For JGroups communication (if needed)
+      targetPort: 7800
+    - name: management
+      protocol: TCP
+      port: 9999 # For management traffic (if needed)
+      targetPort: 9999
