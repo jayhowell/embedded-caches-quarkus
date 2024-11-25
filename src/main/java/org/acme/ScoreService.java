@@ -20,6 +20,7 @@ import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
+import org.infinispan.context.Flag;
 
 @ApplicationScoped
 public class ScoreService {
@@ -35,10 +36,17 @@ public class ScoreService {
     }
 
     public List<Score> getLambdaList() { 
-        return scoreCache.entrySet().stream()
+        /*return scoreCache.entrySet().stream()
                      .filter(entry -> entry.getValue().matches("Jay")) // Filter based on the value
                      .map(Map.Entry::getValue)                        // Extract the values (Score)
-                     .collect(Collectors.toList());   
+                     .collect(Collectors.toList());   */
+        return scoreCache.getAdvancedCache()
+                     .withFlags(Flag.CACHE_MODE_LOCAL)   // Ensure the operation is local
+                     .entrySet()
+                     .stream()
+                     .filter(entry -> entry.getValue().matches("Jay")) // Filter based on the Score object
+                     .map(Map.Entry::getValue)                        // Extract the Score values
+                     .collect(Collectors.toList());
     }
 
     public void save(Score entry) { 
