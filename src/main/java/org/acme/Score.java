@@ -1,9 +1,11 @@
 package org.acme;
 
+import java.io.Serializable;
+
 import org.infinispan.protostream.annotations.ProtoFactory;
 import org.infinispan.protostream.annotations.ProtoField;
 
-public class Score {
+public class Score implements Serializable{
 
     // The number of holes played per round
     public static final int HOLES = 18;

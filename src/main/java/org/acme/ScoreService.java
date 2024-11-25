@@ -50,6 +50,19 @@ public class ScoreService {
         .filter(entry -> entry.getValue().matches("Jay")) // Filter based on the Score object
         .map(Map.Entry::getValue)                        // Extract the Score values
         .collect(Collectors.toList());*/
+        
+        /*Map<Object, Score> deepCopiedMap = new HashMap<>();
+        //add each entry into the deep copy.
+        for (Map.Entry<Object, Score> entry : scoreCache.entrySet()) {
+            // Clone key and value (if mutable)
+            deepCopiedMap.put(entry.getKey(), entry.getValue());
+        }
+        return    // Ensure the operation is local
+        deepCopiedMap.entrySet()
+        .stream()
+        .filter(entry -> entry.getValue().matches("Jay")) // Filter based on the Score object
+        .map(Map.Entry::getValue)                        // Extract the Score values
+        .collect(Collectors.toList());*/
 
         
     }
