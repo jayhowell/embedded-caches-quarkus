@@ -1,9 +1,12 @@
 package org.acme;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -23,7 +26,7 @@ import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 
 @ApplicationScoped
-public class ScoreService {
+public class ScoreService implements Serializable{
 
     Cache<Object, Score> scoreCache; 
 
@@ -36,13 +39,13 @@ public class ScoreService {
     }
 
     public List<Score> getLambdaList() { 
-        //Default functionality where entryset.stream() is a remote operation....
-        return scoreCache.entrySet().stream()
+        //**********Default functionality where entryset.stream() is a remote operation....
+        /*return scoreCache.entrySet().stream()
                      .filter(entry -> entry.getValue().matches("Jay")) // Filter based on the value
                      .map(Map.Entry::getValue)                        // Extract the values (Score)
                      .collect(Collectors.toList());   
-        
-        //Serialization going local
+        */
+        //**************Serialization going local but doesn't work distributed
         /*return scoreCache.getAdvancedCache()
         .withFlags(Flag.CACHE_MODE_LOCAL)   // Ensure the operation is local
         .entrySet()
@@ -50,7 +53,20 @@ public class ScoreService {
         .filter(entry -> entry.getValue().matches("Jay")) // Filter based on the Score object
         .map(Map.Entry::getValue)                        // Extract the Score values
         .collect(Collectors.toList());*/
-
+        
+        //************Deep Copy works by deep copy into a new cache -> ewww
+        Map<Object, Score> deepCopiedMap = new HashMap<>();
+        //add each entry into the deep copy.
+        for (Map.Entry<Object, Score> entry : scoreCache.entrySet()) {
+            // Clone key and value (if mutable)
+            deepCopiedMap.put(entry.getKey(), entry.getValue());
+        }
+        return    // Ensure the operation is local
+        deepCopiedMap.entrySet()
+        .stream()
+        .filter(entry -> entry.getValue().matches("Jay")) // Filter based on the Score object
+        .map(Map.Entry::getValue)                        // Extract the Score values
+        .collect(Collectors.toList());        
         
     }
 
@@ -81,6 +97,7 @@ public class ScoreService {
         global.transport()
             .clusterName("ScoreCard")
             .addProperty("configurationFile", "default-configs/default-jgroups-kubernetes.xml");
+        global.serialization().marshaller(new org.infinispan.marshaller.kryo.KryoMarshaller());
         cacheManager = new DefaultCacheManager(global.build());
 
         ConfigurationBuilder config = new ConfigurationBuilder();
