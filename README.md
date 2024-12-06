@@ -20,18 +20,19 @@ Be aware that it’s not an _über-jar_ as the dependencies are copied into the 
 The application is now runnable using `java -jar target/embedded-caches-quarkus-1.0.0-SNAPSHOT-runner.jar`.
 
 ## Deploying on Openshift
+TODO: refactor the headless service into the deployment so that it happens automatically
+You must deploy the headless serivce in https://github.com/jayhowell/embedded-caches-quarkus/blob/lambda_issue/src/main/resources/default-configs/headlessservice.yaml
+```
+oc project cacheappdemo
+oc apply -f src/main/resources/default-configs/headlessservice.yaml
+```
 To build on openshift `./mvnw clean package -Dquarkus.container-image.build=true`
 To deploy `./mvnw clean package -Dquarkus.kubernetes.deploy=true`
 
-## Creating a native executable
-
-You can create a native executable using: `./mvnw package -Pnative`.
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
-
-You can then execute your native executable with: `./target/embedded-caches-quarkus-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image-guide.
-
-
-
+## Running the scripts
+Once you deploy, you must set the api location of the service. Make sure you have the api on the end
+```
+export EP=http://embedded-caches-quarkus-cache.apps.cluster-4c57w.4c57w.sandbox2855.opentlc.com/api
+./scripts/load.sh
+./scripts/get.sh
+```
