@@ -37,10 +37,10 @@ export EP=http://embedded-caches-quarkus-cache.apps.cluster-4c57w.4c57w.sandbox2
 ./scripts/get.sh
 ```
 ## Reproducing the lamda issue.
--- number of owners is set to 2 in the code
--- increase the number of pods to 3
--- execute the ./scripts/getlamda.sh function
--- you'll see an exception
+- number of owners is set to 2 in the code
+- increase the number of pods to 3
+- execute the ./scripts/getlamda.sh function
+- you'll see an exception
 
 
 
