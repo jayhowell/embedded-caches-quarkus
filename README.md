@@ -25,6 +25,7 @@ You must deploy the headless serivce in https://github.com/jayhowell/embedded-ca
 ```
 oc project cacheappdemo
 oc apply -f src/main/resources/default-configs/headlessservice.yaml
+./mvnw clean package -Dquarkus.kubernetes.deploy=true
 ```
 To build on openshift `./mvnw clean package -Dquarkus.container-image.build=true`
 To deploy `./mvnw clean package -Dquarkus.kubernetes.deploy=true`
